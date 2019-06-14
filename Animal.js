@@ -46,6 +46,8 @@ const BG_COLOR_WHITE = '#ffffffff';
 const BG_COLOR_BLACK = '#000000';
 //扑克颜色
 const BG_COLOR_POKER = '#ff57a7b5';
+//广告按钮颜色
+const BG_COLOR_ADV_BTN = '#ff1aad19';
 
 //手指1,2,3
 const FINGER_1 = 1;
@@ -56,6 +58,8 @@ const FINGER_3 = 3;
 const TIME_BTN_CLICK = 200;
 //弹窗时间
 const TIME_SHOW_CONFIRM = 800;
+//广告播放时间
+const TIME_ADV_LOCK = 1000*20;
 
 var Animal = function(){
     //当前所在页面颜色
@@ -514,10 +518,12 @@ var Animal = function(){
         //this.createTestSquare(380,635,30,80);
         this.isColorRegion(380,635,30,80,BG_COLOR_TASK_NOTICE,function(point){
             this.ra.press(point.x, point.y, TIME_BTN_CLICK, FINGER_2);
+            sleep(TIME_SHOW_CONFIRM);
         });
         //检查对话
         this.isColorRegion(975,1900,70,70,BG_COLOR_TALK,function(point){
             this.ra.press(130, 1890, TIME_BTN_CLICK, FINGER_2);
+            sleep(TIME_SHOW_CONFIRM);
         });
         if(!isGamble){
             //不赌
@@ -556,7 +562,7 @@ var Animal = function(){
         this.isColorRegion(825,70,30,30,BG_COLOR_WHITE,function(point){
             if(!this.checkStart()){
                 // 检查广告时间是否完结 this.createTestSquare(240,72,80,40);
-                if(!this.isColorRegion(240,72,80,40,BG_COLOR_WHITE)){
+                if(!this.isColorRegion(240,72,80,40,BG_COLOR_WHITE) || this.isColorRegion(340,1675,100,100,BG_COLOR_ADV_BTN)){
                     toast("广告已完结");
                     this.ra.press(point.x+120,point.y+15,TIME_BTN_CLICK,FINGER_2);
                 }else{
@@ -620,6 +626,8 @@ var Animal = function(){
                 this.ra.press(point.x, point.y+150,TIME_BTN_CLICK,FINGER_2);
                 sleep(TIME_SHOW_CONFIRM);
                 this.checkNotice();
+                sleep(TIME_ADV_LOCK);
+                this.checkAdv();
             });
         }
     }
@@ -701,10 +709,9 @@ var Animal = function(){
                     $this.checkGratuity(true);
                     //检查歌手
                     $this.checkSinger(true);
-                    //宣传X15
-                    $this.checkPropagandaBtn(true);
+                    //宣传
+                    $this.clickPropaganda(30);
                     //切换页面到花园
-                    $this.clickPropaganda(20);
                     $this.switchPage(BG_COLOR_KITCHEN);
                 }else if($this.isGarden()){ //花园
                     //检测花园金钱
@@ -715,12 +722,17 @@ var Animal = function(){
                     $this.checkFlowerShow();
                     //检查是否需要种植花朵
                     $this.checkFlowerCultivate();
-                    $this.clickPropaganda(20);
+                    //宣传
+                    $this.clickPropaganda(30);
+                    //宣传X15
+                    $this.checkPropagandaBtn(true);
                     //切换页面到餐厅
                     $this.switchPage(BG_COLOR_RESTAURANT);
                 }else if($this.iskitchen()){ //厨房
                     $this.checkkitchenMoney();
-                    $this.clickPropaganda(20);
+                    //宣传
+                    $this.clickPropaganda(30);
+                    //切换到花园
                     $this.switchPage(BG_COLOR_GARDEN);
                 }
             }
@@ -729,14 +741,14 @@ var Animal = function(){
     //音量UP按下
     this.volumeUp = function(event){
         if(!this.is_run){
-            // if(this.checkStart()){
+            if(this.checkStart()){
                 this.ra = new RootAutomator();
                 toast("脚本开始运行了");
                 this.is_run = true;
                 this.workStart();
-            // }else{
-            //     toast("请先打开动物餐厅");
-            // }
+            }else{
+                toast("请先打开动物餐厅");
+            }
         }else{
             toast("脚本已经在运行了.");
         }

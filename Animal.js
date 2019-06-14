@@ -673,7 +673,7 @@ var Animal = function(){
                 sleep(1000);
                 continue;
             }
-            this.ra.press(device.width-150, device.height-170,800,FINGER_1);
+            this.ra.press(device.width-150, device.height-170,5000,FINGER_2);
         }
     }
     this.workStart = function(){
@@ -710,7 +710,7 @@ var Animal = function(){
                     //检查歌手
                     $this.checkSinger(true);
                     //宣传
-                    $this.clickPropaganda(30);
+                    $this.clickPropaganda(3);
                     //切换页面到花园
                     $this.switchPage(BG_COLOR_KITCHEN);
                 }else if($this.isGarden()){ //花园
@@ -723,7 +723,7 @@ var Animal = function(){
                     //检查是否需要种植花朵
                     $this.checkFlowerCultivate();
                     //宣传
-                    $this.clickPropaganda(30);
+                    $this.clickPropaganda(3);
                     //宣传X15
                     $this.checkPropagandaBtn(true);
                     //切换页面到餐厅
@@ -731,7 +731,7 @@ var Animal = function(){
                 }else if($this.iskitchen()){ //厨房
                     $this.checkkitchenMoney();
                     //宣传
-                    $this.clickPropaganda(30);
+                    $this.clickPropaganda(3);
                     //切换到花园
                     $this.switchPage(BG_COLOR_GARDEN);
                 }

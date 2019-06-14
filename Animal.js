@@ -44,6 +44,8 @@ const BG_COLOR_FISH = "#ff929292";
 const BG_COLOR_WHITE = '#ffffffff';
 //黑色
 const BG_COLOR_BLACK = '#000000';
+//扑克颜色
+const BG_COLOR_POKER = '#ff57a7b5';
 
 //手指1,2,3
 const FINGER_1 = 1;
@@ -488,7 +490,7 @@ var Animal = function(){
         return this.isColorRegion(407,665,50,50,BG_COLOR_FISH,function(point){
             if(isGet){
                 this.ra.press(point.x, point.y, TIME_BTN_CLICK, FINGER_2);
-                this.checkDoubleNotice(false);
+                this.checkDoubleNotice(true);
             }
         });
     }
@@ -507,40 +509,43 @@ var Animal = function(){
     }
     //检查老千
     this.checkSwindler = (isGamble,pos) =>{
+        toast("检查老千")
         //赌博,提示位置 颜色:#ffd96a28
         //this.createTestSquare(380,635,30,80);
-        var exists = this.isColorRegion(380,635,30,80,BG_COLOR_TASK_NOTICE,function(point){
+        this.isColorRegion(380,635,30,80,BG_COLOR_TASK_NOTICE,function(point){
             this.ra.press(point.x, point.y, TIME_BTN_CLICK, FINGER_2);
         });
-        if(exists){
-            sleep(2000);
-            //检查对话
-            this.isColorRegion(975,1900,70,70,BG_COLOR_TALK,function(point){
-                this.ra.press(130, 1890, TIME_BTN_CLICK, FINGER_2);
+        //检查对话
+        this.isColorRegion(975,1900,70,70,BG_COLOR_TALK,function(point){
+            this.ra.press(130, 1890, TIME_BTN_CLICK, FINGER_2);
+        });
+        if(!isGamble){
+            //不赌
+            this.isColorRegion(320,1875,100,100,BG_COLOR_DOUBLE_NO,function(point){
+                this.ra.press(point.x, point.y, TIME_BTN_CLICK, FINGER_2);
             });
-            sleep(TIME_SHOW_CONFIRM);
-            if(!isGamble){
-                //不赌
-                this.isColorRegion(320,1875,100,100,BG_COLOR_DOUBLE_NO,function(point){
-                    this.ra.press(point.x, point.y, TIME_BTN_CLICK, FINGER_2);
-                });
-            }else{
-                //赌
-                this.isColorRegion(575,1985,100,100,BG_COLOR_NOTICE,function(point){
-                    this.ra.press(point.x, point.y, TIME_BTN_CLICK, FINGER_2);
-                });
+        }else{
+            //赌
+            this.isColorRegion(705,1820,100,100,BG_COLOR_FISH,function(point){
+                this.ra.press(point.x, point.y, TIME_BTN_CLICK, FINGER_2);
                 sleep(TIME_SHOW_CONFIRM);
-                if(pos == undefined)pos = 1;
-                if(pos == 1){
-                    
-                }else if(pos == 2){
-                    
-                }else if(pos == 3){
-                    
-                }else{
-
-                }
-                
+            });
+            if(pos == undefined)pos = 1;
+            if(pos == 1){
+                //this.createTestSquare(220,780,50,60);
+                this.isColorRegion(220,780,50,60,BG_COLOR_POKER,function(point){
+                    this.ra.press(point.x, point.y, TIME_BTN_CLICK,FINGER_2);
+                });
+            }else if(pos == 2){
+                //this.createTestSquare(520,780,50,60);
+                this.isColorRegion(520,780,50,60,BG_COLOR_POKER,function(point){
+                    this.ra.press(point.x, point.y, TIME_BTN_CLICK,FINGER_2);
+                });
+            }else if(pos == 3){
+                //this.createTestSquare(815,780,50,60);
+                this.isColorRegion(815,780,50,60,BG_COLOR_POKER,function(point){
+                    this.ra.press(point.x, point.y, TIME_BTN_CLICK,FINGER_2);
+                });
             }
         }
     }
@@ -549,16 +554,17 @@ var Animal = function(){
         toast("检查广告");
         //this.createTestSquare(825,70,30,30);
         this.isColorRegion(825,70,30,30,BG_COLOR_WHITE,function(point){
-            //检查黑色部分,确定是广告
-            if(this.isColorRegion(885,90,5,5,BG_COLOR_BLACK)){
-                toast("找到广告");
+            if(!this.checkStart()){
                 // 检查广告时间是否完结 this.createTestSquare(240,72,80,40);
-                if(!this.ra.isColorRegion(240,72,80,40,BG_COLOR_WHITE)){
+                if(!this.isColorRegion(240,72,80,40,BG_COLOR_WHITE)){
                     toast("广告已完结");
                     this.ra.press(point.x+120,point.y+15,TIME_BTN_CLICK,FINGER_2);
+                }else{
+                    toast("广告未完结")
                 }
             }
         });
+        sleep(1000);
     }
     //检查顶部星星
     this.checkStart = () => {
@@ -595,6 +601,28 @@ var Animal = function(){
     this.checkPropaganda = () => {
         return this.isColorRegion(905,1938,100,100,BG_COLOR_PROPAGANDA);
     }
+    //任务按钮
+    this.checkTaskBtn = (isGet) => {
+        //this.createTestSquare(515,1918,160,190)
+        if(isGet){
+            //this.createTestSquare(515,1918,160,190)
+            this.isColorRegion(515,1918,160,190,BG_COLOR_TASK_NOTICE,function(point){
+                this.ra.press(point.x, point.y,TIME_BTN_CLICK,FINGER_2);
+            });
+        }
+    }
+    //宣传X15按钮
+    this.checkPropagandaBtn = (isLook) => {
+        toast("宣传X15")
+        if(isLook){
+            //this.createTestSquare(690,1918,160,190)
+            this.isColorRegion(690,1918,160,190,BG_COLOR_TASK_NOTICE,function(point){
+                this.ra.press(point.x, point.y+150,TIME_BTN_CLICK,FINGER_2);
+                sleep(TIME_SHOW_CONFIRM);
+                this.checkNotice();
+            });
+        }
+    }
     //检查订单
     this.checkOrder = () => {
         toast("检测订单&点击");
@@ -629,16 +657,15 @@ var Animal = function(){
         });
     }
     this.clickPropaganda = (number) => {
-        var $this = this;
-        //检查宣传按钮
-        if(!this.checkPropaganda()){
-            toast("宣传按钮不存在了");
-            sleep(1000);
-        }else{
-            toast("点击宣传按钮")
-            for(var i = 0;i<number;i++){
-                $this.ra.press(device.width-150, device.height-170,800,FINGER_1);
+        toast("点击宣传按钮");
+        for(var i = 0;i<number;i++){
+            //检查宣传按钮
+            if(!this.checkPropaganda()){
+                toast("宣传按钮不存在了");
+                sleep(1000);
+                continue;
             }
+            this.ra.press(device.width-150, device.height-170,800,FINGER_1);
         }
     }
     this.workStart = function(){
@@ -662,10 +689,10 @@ var Animal = function(){
                 $this.checkOrder();
                 //检查对话
                 $this.checkTalk();
+                //检查赌博
+                $this.checkSwindler(true,3);
                 //餐厅
                 if($this.isRestaurant()){
-                    //检查赌博
-                    $this.checkSwindler(false);
                     //检查任务
                     $this.checkTask();
                     //检查金钱
@@ -674,12 +701,12 @@ var Animal = function(){
                     $this.checkGratuity(true);
                     //检查歌手
                     $this.checkSinger(true);
+                    //宣传X15
+                    $this.checkPropagandaBtn(true);
                     //切换页面到花园
                     $this.clickPropaganda(20);
                     $this.switchPage(BG_COLOR_KITCHEN);
-                }
-                //花园
-                if($this.isGarden()){
+                }else if($this.isGarden()){ //花园
                     //检测花园金钱
                     $this.checkGardenMoney();
                     //检查花朵是否成熟
@@ -691,9 +718,7 @@ var Animal = function(){
                     $this.clickPropaganda(20);
                     //切换页面到餐厅
                     $this.switchPage(BG_COLOR_RESTAURANT);
-                }
-                //厨房
-                if($this.iskitchen()){
+                }else if($this.iskitchen()){ //厨房
                     $this.checkkitchenMoney();
                     $this.clickPropaganda(20);
                     $this.switchPage(BG_COLOR_GARDEN);
@@ -704,14 +729,14 @@ var Animal = function(){
     //音量UP按下
     this.volumeUp = function(event){
         if(!this.is_run){
-            if(this.checkStart()){
+            // if(this.checkStart()){
                 this.ra = new RootAutomator();
                 toast("脚本开始运行了");
                 this.is_run = true;
                 this.workStart();
-            }else{
-                toast("请先打开动物餐厅");
-            }
+            // }else{
+            //     toast("请先打开动物餐厅");
+            // }
         }else{
             toast("脚本已经在运行了.");
         }
@@ -739,14 +764,14 @@ var Animal = function(){
             toast("获取截图权限失败,中断操作");
             exit();
         }
-        // //屏蔽原音量键功能
+        //屏蔽原音量键功能
         events.setKeyInterceptionEnabled("volume_up", true);
         events.setKeyInterceptionEnabled("volume_down", true);
-        // //启用按键监听
+        //启用按键监听
         events.observeKey();
-        // //监听音量上键按下
+        //监听音量上键按下
         events.onKeyDown("volume_up", this.volumeUp.bind(this));
-        // //监听音量下键按下
+        //监听音量下键按下
         events.onKeyDown("volume_down", this.volumeDown.bind(this));
         //设置屏幕适配
         setScreenMetrics(1080, 2160);
